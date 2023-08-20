@@ -1,6 +1,5 @@
 import * as React from "react"
 import { graphql, Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -13,10 +12,12 @@ const Index = ({ data }) => (
       <span> Total blog posts: {data.allMarkdownRemark.totalCount}</span>
       {data.allMarkdownRemark.edges.map(({ node }) => (
         <div key={node.id}>
-          <h3>
-            {node.frontmatter.title} - {node.frontmatter.date}
-          </h3>
-          <p>{node.frontmatter.excerpt}</p>
+          <Link to={node.fields.slug}>
+            <h3>
+              {node.frontmatter.title} - {node.frontmatter.date}
+            </h3>
+          </Link>
+          <p>{node.excerpt}</p>
         </div>
       ))}
     </div>
@@ -29,7 +30,7 @@ export const Head = () => <Seo title="Home" />
 
 export const query = graphql`
   query {
-    allMarkdownRemark {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
       totalCount
       edges {
         node {
@@ -38,6 +39,9 @@ export const query = graphql`
             date
             description
             title
+          }
+          fields {
+            slug
           }
           excerpt
           html
